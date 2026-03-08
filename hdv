@@ -1,0 +1,195 @@
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "FakeTradeScamGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 240, 0, 320)
+mainFrame.Position = UDim2.new(0.5, -120, 0.5, -160)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
+mainFrame.Parent = screenGui
+
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 10)
+uiCorner.Parent = mainFrame
+
+-- Title bar (visual only now)
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 40)
+titleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -80, 1, 0)
+titleLabel.Position = UDim2.new(0, 12, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Trade Scam"
+titleLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+titleLabel.TextSize = 16
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = titleBar
+
+local versionLabel = Instance.new("TextLabel")
+versionLabel.Size = UDim2.new(0, 50, 1, 0)
+versionLabel.Position = UDim2.new(0, 12, 0, 0)
+versionLabel.BackgroundTransparency = 1
+versionLabel.Text = "v1.0"
+versionLabel.TextColor3 = Color3.fromRGB(160, 160, 180)
+versionLabel.TextSize = 14
+versionLabel.Font = Enum.Font.Gotham
+versionLabel.TextXAlignment = Enum.TextXAlignment.Left
+versionLabel.Parent = titleBar
+
+-- Lock button
+local lockButton = Instance.new("TextButton")
+lockButton.Size = UDim2.new(0, 36, 0, 36)
+lockButton.Position = UDim2.new(1, -42, 0, 2)
+lockButton.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+lockButton.BorderSizePixel = 0
+lockButton.Text = "🔓"
+lockButton.TextColor3 = Color3.fromRGB(200, 200, 220)
+lockButton.TextSize = 20
+lockButton.Font = Enum.Font.GothamBold
+lockButton.Parent = titleBar
+
+local lockCorner = Instance.new("UICorner")
+lockCorner.CornerRadius = UDim.new(0, 8)
+lockCorner.Parent = lockButton
+
+-- Dragging variables
+local dragging = false
+local dragStart = nil
+local startPos = nil
+local isLocked = false
+
+-- Toggle lock
+lockButton.MouseButton1Click:Connect(function()
+    isLocked = not isLocked
+    lockButton.Text = isLocked and "🔒" or "🔓"
+    lockButton.BackgroundColor3 = isLocked and Color3.fromRGB(100, 60, 60) or Color3.fromRGB(50, 50, 60)
+end)
+
+-- Start dragging (from anywhere on mainFrame when not locked)
+mainFrame.InputBegan:Connect(function(input)
+    if isLocked then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        mainFrame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+-- Status label
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, -20, 0, 32)
+statusLabel.Position = UDim2.new(0, 10, 0, 45)
+statusLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+statusLabel.BorderSizePixel = 0
+statusLabel.Text = ""
+statusLabel.TextColor3 = Color3.fromRGB(200, 255, 180)
+statusLabel.TextSize = 13
+statusLabel.Font = Enum.Font.GothamSemibold
+statusLabel.TextWrapped = true
+statusLabel.Parent = mainFrame
+
+local statusCorner = Instance.new("UICorner")
+statusCorner.CornerRadius = UDim.new(0, 6)
+statusCorner.Parent = statusLabel
+
+local function createButton(name, color, yOffset, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -20, 0, 42)
+    btn.Position = UDim2.new(0, 10, 0, yOffset)
+    btn.BackgroundColor3 = color
+    btn.BorderSizePixel = 0
+    btn.Text = name
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.TextSize = 15
+    btn.Font = Enum.Font.GothamBold
+    btn.AutoButtonColor = false
+    btn.Parent = mainFrame
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 8)
+    corner.Parent = btn
+
+    btn.MouseButton1Click:Connect(function()
+        callback()
+        
+        local ripple = Instance.new("Frame")
+        ripple.AnchorPoint = Vector2.new(0.5,0.5)
+        ripple.Position = UDim2.new(0.5,0,0.5,0)
+        ripple.Size = UDim2.new(0,0,0,0)
+        ripple.BackgroundColor3 = Color3.new(1,1,1)
+        ripple.BackgroundTransparency = 0.7
+        ripple.ZIndex = 10
+        ripple.Parent = btn
+        
+        local rippleCorner = Instance.new("UICorner")
+        rippleCorner.CornerRadius = UDim.new(1,0)
+        rippleCorner.Parent = ripple
+
+        local tween = TweenService:Create(ripple, TweenInfo.new(0.6, Enum.EasingStyle.Quad), {
+            Size = UDim2.new(2.2,0,2.2,0),
+            BackgroundTransparency = 1
+        })
+        tween:Play()
+        task.delay(0.7, function() ripple:Destroy() end)
+    end)
+end
+
+createButton("Force Accept", Color3.fromRGB(60,180,100), 95, function()
+    statusLabel.Text = "Forcing trade..."
+    statusLabel.TextColor3 = Color3.fromRGB(255,220,100)
+    task.wait(1.2)
+    statusLabel.Text = "Trade accepted"
+    statusLabel.TextColor3 = Color3.fromRGB(120,255,140)
+    task.wait(2.8)
+    statusLabel.Text = ""
+end)
+
+createButton("Freeze Victim", Color3.fromRGB(220,80,60), 155, function()
+    statusLabel.Text = "Freezing trade..."
+    statusLabel.TextColor3 = Color3.fromRGB(255,180,100)
+    task.wait(1.4)
+    statusLabel.Text = "Trade frozen"
+    statusLabel.TextColor3 = Color3.fromRGB(200,120,255)
+    task.wait(3)
+    statusLabel.Text = ""
+end)
+
+createButton("Force Give All Brainrot", Color3.fromRGB(140,60,220), 215, function()
+    statusLabel.Text = "Giving all brainrot..."
+    statusLabel.TextColor3 = Color3.fromRGB(220,140,255)
+    task.wait(1.6)
+    statusLabel.Text = "All brainrot given successfully"
+    statusLabel.TextColor3 = Color3.fromRGB(100,255,180)
+    task.wait(3.2)
+    statusLabel.Text = ""
+end)

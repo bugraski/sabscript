@@ -1,0 +1,381 @@
+local UIS = game:GetService("UserInputService")
+local TS  = game:GetService("TweenService")
+local plr = game.Players.LocalPlayer
+local pg  = plr:WaitForChild("PlayerGui")
+
+local sg = Instance.new("ScreenGui")
+sg.Name = "TypaShitMini"
+sg.ResetOnSpawn = false
+sg.Parent = pg
+
+-- Badge popup on load
+local badge = Instance.new("Frame")
+badge.Size = UDim2.new(0, 220, 0, 80)
+badge.Position = UDim2.new(1, -240, 1, -100)
+badge.BackgroundColor3 = Color3.fromRGB(34, 139, 34)
+badge.BorderSizePixel = 0
+badge.Parent = sg
+
+local badgeCorner = Instance.new("UICorner")
+badgeCorner.CornerRadius = UDim.new(0, 10)
+badgeCorner.Parent = badge
+
+local badgeStroke = Instance.new("UIStroke")
+badgeStroke.Color = Color3.fromRGB(255, 215, 0)
+badgeStroke.Thickness = 2
+badgeStroke.Transparency = 0.4
+badgeStroke.Parent = badge
+
+local medalIcon = Instance.new("ImageLabel")
+medalIcon.Size = UDim2.new(0, 48, 0, 48)
+medalIcon.Position = UDim2.new(0, 12, 0.5, -24)
+medalIcon.BackgroundTransparency = 1
+medalIcon.Image = "rbxassetid://6031068430"
+medalIcon.ScaleType = Enum.ScaleType.Fit
+medalIcon.Parent = badge
+
+local badgeText = Instance.new("TextLabel")
+badgeText.Size = UDim2.new(1, -70, 1, 0)
+badgeText.Position = UDim2.new(0, 70, 0, 0)
+badgeText.BackgroundTransparency = 1
+badgeText.Text = "Awarded by typashit_\nfollow for more updates"
+badgeText.TextColor3 = Color3.new(1,1,1)
+badgeText.TextSize = 14
+badgeText.Font = Enum.Font.GothamSemibold
+badgeText.TextXAlignment = Enum.TextXAlignment.Left
+badgeText.TextYAlignment = Enum.TextYAlignment.Center
+badgeText.TextWrapped = true
+badgeText.Parent = badge
+
+task.delay(6, function()
+    if badge and badge.Parent then
+        TS:Create(badge, TweenInfo.new(1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundTransparency = 1,
+            Position = UDim2.new(1, -240, 1, -40)
+        }):Play()
+        task.delay(1.3, function() badge:Destroy() end)
+    end
+end)
+
+-- Main GUI (slightly taller for trading bar)
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 180, 0, 260)
+main.Position = UDim2.new(0.5, -90, 0.5, -130)
+main.BackgroundColor3 = Color3.fromRGB(18,18,24)
+main.BorderSizePixel = 0
+main.ClipsDescendants = true
+main.Parent = sg
+
+local cr = Instance.new("UICorner")
+cr.CornerRadius = UDim.new(0, 12)
+cr.Parent = main
+
+local hdr = Instance.new("Frame")
+hdr.Size = UDim2.new(1,0,0,38)
+hdr.BackgroundColor3 = Color3.fromRGB(28,28,36)
+hdr.BorderSizePixel = 0
+hdr.Parent = main
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -70, 0, 20)
+title.Position = UDim2.new(0, 12, 0, 4)
+title.BackgroundTransparency = 1
+title.Text = "typashit_"
+title.TextColor3 = Color3.fromRGB(230,230,255)
+title.TextSize = 17
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextTruncate = Enum.TextTruncate.SplitWord
+title.Parent = hdr
+
+local sub = Instance.new("TextLabel")
+sub.Size = UDim2.new(1, -70, 0, 14)
+sub.Position = UDim2.new(0, 12, 0, 22)
+sub.BackgroundTransparency = 1
+sub.Text = "trade script"
+sub.TextColor3 = Color3.fromRGB(140,140,170)
+sub.TextSize = 11
+sub.Font = Enum.Font.Gotham
+sub.TextXAlignment = Enum.TextXAlignment.Left
+sub.Parent = hdr
+
+local pf = Instance.new("Frame")
+pf.Size = UDim2.new(0, 36, 0, 36)
+pf.Position = UDim2.new(1, -100, 0, 1)
+pf.BackgroundColor3 = Color3.fromRGB(35,35,45)
+pf.BorderSizePixel = 0
+pf.Parent = hdr
+
+local pfc = Instance.new("UICorner")
+pfc.CornerRadius = UDim.new(1,0)
+pfc.Parent = pf
+
+local img = Instance.new("ImageLabel")
+img.Size = UDim2.new(1,-4,1,-4)
+img.Position = UDim2.new(0,2,0,2)
+img.BackgroundTransparency = 1
+img.Image = "rbxassetid://13471466107"
+img.ScaleType = Enum.ScaleType.Fit
+img.Parent = pf
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0,22,0,22)
+closeBtn.Position = UDim2.new(1, -30, 0, 8)
+closeBtn.BackgroundColor3 = Color3.fromRGB(180,60,50)
+closeBtn.BorderSizePixel = 0
+closeBtn.Text = "×"
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.TextSize = 16
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.Parent = hdr
+
+local closeC = Instance.new("UICorner")
+closeC.CornerRadius = UDim.new(0,6)
+closeC.Parent = closeBtn
+
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0,22,0,22)
+minBtn.Position = UDim2.new(1, -58, 0, 8)
+minBtn.BackgroundColor3 = Color3.fromRGB(50,140,200)
+minBtn.BorderSizePixel = 0
+minBtn.Text = "−"
+minBtn.TextColor3 = Color3.new(1,1,1)
+minBtn.TextSize = 18
+minBtn.Font = Enum.Font.GothamBold
+minBtn.Parent = hdr
+
+local minC = Instance.new("UICorner")
+minC.CornerRadius = UDim.new(0,6)
+minC.Parent = minBtn
+
+local status = Instance.new("TextLabel")
+status.Size = UDim2.new(1,-16,0,28)
+status.Position = UDim2.new(0,8,0,45)
+status.BackgroundColor3 = Color3.fromRGB(28,28,36)
+status.BorderSizePixel = 0
+status.Text = ""
+status.TextColor3 = Color3.fromRGB(160,255,180)
+status.TextSize = 12
+status.Font = Enum.Font.GothamSemibold
+status.TextWrapped = true
+status.Parent = main
+
+local sc = Instance.new("UICorner")
+sc.CornerRadius = UDim.new(0,6)
+sc.Parent = status
+
+-- Button creator
+local function btn(t, emoji, col, y, func)
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(1,-16,0,36)
+    b.Position = UDim2.new(0,8,0,y)
+    b.BackgroundColor3 = col
+    b.BorderSizePixel = 0
+    b.Text = emoji .. "  " .. t
+    b.TextColor3 = Color3.new(1,1,1)
+    b.TextSize = 13
+    b.Font = Enum.Font.GothamBold
+    b.AutoButtonColor = false
+    b.Parent = main
+
+    local bc = Instance.new("UICorner")
+    bc.CornerRadius = UDim.new(0,8)
+    bc.Parent = b
+
+    b.MouseButton1Click:Connect(function()
+        func()
+        local r = Instance.new("Frame")
+        r.AnchorPoint = Vector2.new(0.5,0.5)
+        r.Position = UDim2.new(0.5,0,0.5,0)
+        r.Size = UDim2.new(0,0,0,0)
+        r.BackgroundColor3 = Color3.new(1,1,1)
+        r.BackgroundTransparency = 0.7
+        r.ZIndex = 5
+        r.Parent = b
+        local rc = Instance.new("UICorner")
+        rc.CornerRadius = UDim.new(1,0)
+        rc.Parent = r
+        TS:Create(r, TweenInfo.new(0.5), {Size=UDim2.new(2,0,2,0), BackgroundTransparency=1}):Play()
+        task.delay(0.6, function() r:Destroy() end)
+    end)
+end
+
+-- Buttons (brainrot has no emojis now)
+btn("Force Accept",   "✅",     Color3.fromRGB(60,170,90),   85,  function()
+    status.Text = "Forcing…"; task.wait(0.9); status.Text = "Accepted!"; task.wait(2); status.Text = ""
+end)
+
+btn("Freeze Victim",  "❄️",     Color3.fromRGB(190,70,60),  130, function()
+    status.Text = "Freezing…"; task.wait(1); status.Text = "Frozen!"; task.wait(2.2); status.Text = ""
+end)
+
+btn("Give All Brainrot", "", Color3.fromRGB(120,60,190), 175, function()
+    status.Text = "Dumping all brainrot…"; task.wait(1.1); status.Text = "Success!"; task.wait(2.5); status.Text = ""
+end)
+
+-- Trading partner bar at the bottom
+local bar = Instance.new("Frame")
+bar.Size = UDim2.new(1, -16, 0, 32)
+bar.Position = UDim2.new(0, 8, 1, -40)
+bar.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+bar.BorderSizePixel = 0
+bar.Parent = main
+
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(0, 6)
+barCorner.Parent = bar
+
+local avatar = Instance.new("ImageLabel")
+avatar.Size = UDim2.new(0, 24, 0, 24)
+avatar.Position = UDim2.new(0, 6, 0.5, -12)
+avatar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+avatar.BorderSizePixel = 0
+avatar.Image = ""
+avatar.Parent = bar
+
+local avatarCorner = Instance.new("UICorner")
+avatarCorner.CornerRadius = UDim.new(1, 0)
+avatarCorner.Parent = avatar
+
+local tradingLabel = Instance.new("TextLabel")
+tradingLabel.BackgroundTransparency = 1
+tradingLabel.Position = UDim2.new(0, 36, 0, 0)
+tradingLabel.Size = UDim2.new(1, -50, 1, 0)
+tradingLabel.Text = "Trading With: ..."
+tradingLabel.Font = Enum.Font.GothamBold
+tradingLabel.TextSize = 12
+tradingLabel.TextColor3 = Color3.fromRGB(0, 170, 255)
+tradingLabel.TextXAlignment = Enum.TextXAlignment.Left
+tradingLabel.Parent = bar
+
+-- Trading detection logic
+local function getTradeUsername()
+    local success, result = pcall(function()
+        local tradeLive = pg:WaitForChild("TradeLiveTrade", 10)
+        if not tradeLive then return nil end
+        local inner = tradeLive:WaitForChild("TradeLiveTrade", 5)
+        local other = inner:WaitForChild("Other", 5)
+        local usernameLabel = other:WaitForChild("Username", 5)
+        return usernameLabel
+    end)
+    if success and result then return result end
+    return nil
+end
+
+local function parseUsername(raw)
+    local name = raw:match("@([^']+)") or raw:match("([^%s]+)")
+    return name
+end
+
+local function applyUser(username)
+    tradingLabel.Text = "Trading With: " .. (username or "unknown")
+    local ok, userId = pcall(function()
+        return game.Players:GetUserIdFromNameAsync(username)
+    end)
+    if ok and userId then
+        local thumbOk, thumb = pcall(function()
+            return game.Players:GetUserThumbnailAsync(
+                userId,
+                Enum.ThumbnailType.HeadShot,
+                Enum.ThumbnailSize.Size48x48
+            )
+        end)
+        if thumbOk and thumb then
+            avatar.Image = thumb
+        end
+    end
+end
+
+task.spawn(function()
+    local usernameLabel = getTradeUsername()
+    if not usernameLabel then
+        tradingLabel.Text = "Trading With: (not found)"
+        return
+    end
+
+    local name = parseUsername(usernameLabel.Text)
+    if name then applyUser(name) end
+
+    usernameLabel:GetPropertyChangedSignal("Text"):Connect(function()
+        local newName = parseUsername(usernameLabel.Text)
+        if newName then applyUser(newName) end
+    end)
+end)
+
+-- Dragging main GUI
+local dragging, dragStart, startPos
+hdr.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = main.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Minimize → draggable circle
+local minimized = false
+local miniCircle
+
+minBtn.MouseButton1Click:Connect(function()
+    minimized = true
+    main.Visible = false
+
+    miniCircle = Instance.new("ImageButton")
+    miniCircle.Size = UDim2.new(0,48,0,48)
+    miniCircle.Position = UDim2.new(1, -80, 1, -80)
+    miniCircle.BackgroundColor3 = Color3.fromRGB(35,35,45)
+    miniCircle.BorderSizePixel = 0
+    miniCircle.Image = avatar.Image ~= "" and avatar.Image or "rbxassetid://13471466107"
+    miniCircle.ScaleType = Enum.ScaleType.Fit
+    miniCircle.Parent = sg
+
+    local circ = Instance.new("UICorner")
+    circ.CornerRadius = UDim.new(1,0)
+    circ.Parent = miniCircle
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(100,180,255)
+    stroke.Thickness = 1.5
+    stroke.Transparency = 0.3
+    stroke.Parent = miniCircle
+
+    -- Dragging for circle
+    local miniDragging, miniDragStart, miniStartPos
+    miniCircle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            miniDragging = true
+            miniDragStart = input.Position
+            miniStartPos = miniCircle.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then miniDragging = false end
+            end)
+        end
+    end)
+
+    UIS.InputChanged:Connect(function(input)
+        if miniDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - miniDragStart
+            miniCircle.Position = UDim2.new(miniStartPos.X.Scale, miniStartPos.X.Offset + delta.X, miniStartPos.Y.Scale, miniStartPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    miniCircle.MouseButton1Click:Connect(function()
+        minimized = false
+        main.Visible = true
+        miniCircle:Destroy()
+    end)
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+    sg:Destroy()
+end)
